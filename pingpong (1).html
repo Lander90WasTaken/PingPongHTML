@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ping Pong Game</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #000;
+            margin: 0;
+        }
+        #gameCanvas {
+            background: #fff;
+            border: 2px solid #000;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="600" height="400"></canvas>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const context = canvas.getContext('2d');
+
+        const paddleWidth = 100;
+        const paddleHeight = 10;
+        const paddleSpeed = 10;
+        let paddleX = (canvas.width - paddleWidth) / 2;
+
+        const ballRadius = 10;
+        let ballX = canvas.width / 2;
+        let ballY = canvas.height - 30;
+        let ballSpeedX = 2;
+        let ballSpeedY = -2;
+
+        function drawPaddle() {
+            context.beginPath();
+            context.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
+            context.fillStyle = "#0095DD";
+            context.fill();
+            context.closePath();
+        }
+
+        function drawBall() {
+            context.beginPath();
+            context.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
+            context.fillStyle = "#0095DD";
+            context.fill();
+            context.closePath();
+        }
+
+        function draw() {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            drawBall();
+            drawPaddle();
+            moveBall();
+        }
+
+        function moveBall() {
+            if(ballX + ballSpeedX > canvas.width - ballRadius || ballX + ballSpeedX < ballRadius) {
+                ballSpeedX = -ballSpeedX;
+            }
+            if(ballY + ballSpeedY < ballRadius) {
+                ballSpeedY = -ballSpeedY;
+            } else if(ballY + ballSpeedY > canvas.height - ballRadius) {
+                if(ballX > paddleX && ballX < paddleX + paddleWidth) {
+                    ballSpeedY = -ballSpeedY;
+                } else {
+                    document.location.reload();
+                }
+            }
+
+            ballX += ballSpeedX;
+            ballY += ballSpeedY;
+        }
+
+        document.addEventListener("keydown", function(event) {
+            if(event.key === "ArrowLeft" || event.key === "a") {
+                if(paddleX > 0) {
+                    paddleX -= paddleSpeed;
+                }
+            } else if(event.key === "ArrowRight" || event.key === "d") {
+                if(paddleX < canvas.width - paddleWidth) {
+                    paddleX += paddleSpeed;
+                }
+            }
+        });
+
+        setInterval(draw, 10);
+    </script>
+</body>
+</html>
